@@ -1,6 +1,6 @@
-import { h, Component } from 'preact';
-import axios from 'axios';
-import QuestionDisplay from '../../components/QuestionDisplay';
+import { h, Component } from "preact";
+import axios from "axios";
+import QuestionDisplay from "../../components/QuestionDisplay";
 
 export default class Answers extends Component {
   state = {
@@ -14,82 +14,87 @@ export default class Answers extends Component {
   }
 
   fetchFormData = async () => {
-    this.setState({...this.state, loading: true});
+    this.setState({ ...this.state, loading: true });
     const { id } = this.props;
     try {
-      const formResponse = await axios.get(`http://localhost:8080/questionnaire/${id}`).catch(() => ({
-        data: {
-          id,
-          title: 'Mock Questionnaire',
-          questions: [
-            {
-              questionId: '39e07d3b-4528-4621-92a1-302f9dc3c742',
-              questionType: 'TEXT',
-              questionText: 'Mock Text Question',
-              options: [],
-            },
-            {
-              questionId: 'd1b0d1da-8efb-41f6-9fc6-eb023b2ed443',
-              questionType: 'MCQ',
-              questionText: 'Mock MCQ Question',
-              options: ['Option 1', 'Option 2'],
-            },
-          ],
-          answers: [
-            {
-              questionId: '39e07d3b-4528-4621-92a1-302f9dc3c742',
-              answerText: 'Java',
-            },
-            {
-              questionId: 'd1b0d1da-8efb-41f6-9fc6-eb023b2ed443',
-              answerText: 'React is easier to use than Angular.',
-            },
-          ],
-        }, // Mock default form with answers
-      })).finally(() => {
-        this.setState({...this.state, loading: false});
-      });
+      const API_BASE = import.meta.env.VITE_MICRONAUT_BACKEND_URL;
+      const formResponse = await axios
+        .get(`${API_BASE}/questionnaire/${id}`)
+        .catch(() => ({
+          data: {
+            id,
+            title: "Mock Questionnaire",
+            questions: [
+              {
+                questionId: "39e07d3b-4528-4621-92a1-302f9dc3c742",
+                questionType: "TEXT",
+                questionText: "Mock Text Question",
+                options: [],
+              },
+              {
+                questionId: "d1b0d1da-8efb-41f6-9fc6-eb023b2ed443",
+                questionType: "MCQ",
+                questionText: "Mock MCQ Question",
+                options: ["Option 1", "Option 2"],
+              },
+            ],
+            answers: [
+              {
+                questionId: "39e07d3b-4528-4621-92a1-302f9dc3c742",
+                answerText: "Java",
+              },
+              {
+                questionId: "d1b0d1da-8efb-41f6-9fc6-eb023b2ed443",
+                answerText: "React is easier to use than Angular.",
+              },
+            ],
+          }, // Mock default form with answers
+        }))
+        .finally(() => {
+          this.setState({ ...this.state, loading: false });
+        });
       this.setState({
         formData: formResponse.data,
         error: null,
       });
     } catch (err) {
-      this.setState({ error: 'Failed to load form data.' });
+      this.setState({ error: "Failed to load form data." });
     }
   };
 
-    handleAnswerSubmit = async (newAnswers) => {    
+  handleAnswerSubmit = async (newAnswers) => {
     const { id } = this.props;
     const { formData } = this.state;
 
-    console.log(formData.questions)
+    console.log(formData.questions);
 
     const payload = {
-        questionnaireId: id,
-        answers: newAnswers,
+      questionnaireId: id,
+      answers: newAnswers,
     };
 
     try {
-        await axios.post(`http://localhost:8080/questionnaire/${id}/answers`, payload);
-        this.fetchFormData(); // Refresh data
+      const API_BASE = import.meta.env.VITE_MICRONAUT_BACKEND_URL;
+      await axios.post(`${API_BASE}/questionnaire/${id}/answers`, payload);
+      this.fetchFormData(); // Refresh data
     } catch (err) {
-        this.setState({
-        error: 'Failed to submit answers.',
-        });
-        // Optionally handle mock submission
-        this.setState((prevState) => ({
+      this.setState({
+        error: "Failed to submit answers.",
+      });
+      // Optionally handle mock submission
+      this.setState((prevState) => ({
         formData: {
-            ...prevState.formData,
-            answers: [...(prevState.formData.answers || []), ...payload.answers],
+          ...prevState.formData,
+          answers: [...(prevState.formData.answers || []), ...payload.answers],
         },
-        }));
+      }));
     }
-    };
+  };
 
   render() {
     const { formData, error } = this.state;
-        if (this.state.loading) {
-        return "Loading...";
+    if (this.state.loading) {
+      return "Loading...";
     }
     if (!formData || !formData.questions) {
       return (
@@ -103,7 +108,7 @@ export default class Answers extends Component {
     return (
       <div class="space-y-6 p-6 bg-gray-50 rounded-xl shadow-md max-w-2xl mx-auto">
         <h1 class="text-3xl font-bold text-indigo-700 text-center">
-          {formData.title || 'Questionnaire'}
+          {formData.title || "Questionnaire"}
         </h1>
         <QuestionDisplay
           questions={formData.questions}

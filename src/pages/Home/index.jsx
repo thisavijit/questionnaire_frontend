@@ -10,7 +10,8 @@ export default class Home extends Component {
 
   handleSubmit = async (formData) => {
     try {
-      const response = await axios.post('http://localhost:8080/questionnaire', formData);
+      const API_BASE = import.meta.env.VITE_MICRONAUT_BACKEND_URL;
+      const response = await axios.post(`${API_BASE}/questionnaire`, formData);
       const { questionnaireId } = response.data;
       const currentUrl = window.location.origin;
       this.setState({ 
