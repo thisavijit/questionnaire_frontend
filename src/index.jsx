@@ -8,7 +8,7 @@ import './style.css';
 export function App() {
   return (
     <LocationProvider>
-      <main class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-50 via-purple-50 to-pink-50 p-6">
+      <main class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-50 via-purple-50 to-pink-50 p-5">
         <Router>
           <Route path="/" component={Home} />
           <Route path="/response/:id" component={Answers} />
